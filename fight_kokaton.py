@@ -53,7 +53,6 @@ class Bird:
         self.rct = self.img.get_rect()
         self.rct.center = xy
         self.dire = (5, 0)
-
         img_flip = pg.transform.flip(self.img, True, False)
         self.imgs: dict = {
             (0, 0): self.img,
@@ -143,7 +142,6 @@ class Beam:
         self.vx, self.vy = bird.dire[0], bird.dire[1]
         self.rct.centerx = bird.rct.centerx + (bird.rct.width * self.vx/5 )
         self.rct.centery = bird.rct.centery + (bird.rct.height * self.vy/5 )
-
         self.img = pg.transform.rotozoom(self.img, math.degrees(math.atan2(-self.vy, self.vx)), 1.0)
 
     def update(self, screen: pg.Surface):
@@ -218,7 +216,6 @@ def main():
     explosions = []
     beams = []
     score = Score()
-
     clock = pg.time.Clock()
     tmr = 0
     while True:
