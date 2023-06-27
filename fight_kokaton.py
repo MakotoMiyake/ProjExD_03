@@ -185,16 +185,39 @@ class Explosion:
         self.life -= 1
 
 
+class Score:
+    """
+    スコアに関するクラス
+    """
+    def __init__(self):
+        """
+        フォント、文字色、初期値の設定
+        文字列Surfaceを生成
+        """
+        self.font = pg.font.SysFont("hg創英角ﾎﾟｯﾌﾟ体", 30)
+        self.color = (0, 0, 255)
+        self.score = 0
+        self.img = self.font.render(f"スコア:{self.score}", 0, self.color)
+        self.rct = 100, HEIGHT - 50
+
+    def update(self, screen: pg.Surface):
+        """
+        現在のスコアを表示する
+        引数 screen:画面Surface
+        """
+        self.img = self.font.render(f"スコア:{self.score}", 0, self.color)
+        screen.blit(self.img, self.rct)        
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("ex03/fig/pg_bg.jpg")
     bird = Bird(3, (900, 400))
-    
     bombs = [Bomb() for _ in range(NUM_OF_BOMS)]
     explosions = []
-
     beam = None
+    score = Score()
 
     clock = pg.time.Clock()
     tmr = 0
@@ -223,6 +246,7 @@ def main():
                     bombs[i] = None
                     beam = None
                     explosions.append(Explosion(bomb))
+                    score.score += 1
                     pg.display.update()
         
         key_lst = pg.key.get_pressed()
@@ -235,6 +259,7 @@ def main():
             explosion.update(screen)
         if beam is not None:
             beam.update(screen)
+        score.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
