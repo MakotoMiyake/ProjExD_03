@@ -1,3 +1,4 @@
+import math
 import random
 import sys
 import time
@@ -51,6 +52,7 @@ class Bird:
         )
         self.rct = self.img.get_rect()
         self.rct.center = xy
+        self.dire = (5, 0)
 
         img_flip = pg.transform.flip(self.img, True, False)
         self.imgs: dict = {
@@ -89,6 +91,8 @@ class Bird:
         if check_bound(self.rct) != (True, True):
             self.rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(self.imgs[tuple(sum_mv)], self.rct)
+        if sum_mv == [0, 0]: sum_mv = [5, 0]
+        self.dire = tuple(sum_mv)
 
 
 class Bomb:
@@ -136,9 +140,11 @@ class Beam:
         """
         self.img = pg.transform.rotozoom(pg.image.load("ex03/fig/beam.png"), 0, 2.0)
         self.rct = self.img.get_rect()
-        self.rct.left = bird.rct.right 
-        self.rct.centery = bird.rct.centery
-        self.vx, self.vy = +5, 0
+        self.vx, self.vy = bird.dire[0], bird.dire[1]
+        self.rct.centerx = bird.rct.centerx + (bird.rct.width * self.vx/5 )
+        self.rct.centery = bird.rct.centery + (bird.rct.height * self.vy/5 )
+
+        self.img = pg.transform.rotozoom(self.img, math.degrees(math.atan2(-self.vy, self.vx)), 1.0)
 
     def update(self, screen: pg.Surface):
         """
@@ -216,10 +222,8 @@ def main():
                     # 爆弾とビームの衝突判定
                     bombs[i] = None
                     beam = None
-                    bird.change_img(6, screen)
                     explosions.append(Explosion(bomb))
                     pg.display.update()
-
         
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
